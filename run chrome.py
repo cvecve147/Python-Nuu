@@ -55,16 +55,16 @@ def logins(inputac,
 
     account.send_keys(inputac)
     password.send_keys(inputpw)
-    print(len(driver.find_elements_by_xpath(
-        '//*[@id="baseContent_cph_mainContent_cph_img_btn"]')))
-    if(len(driver.find_elements_by_xpath('//*[@id="baseContent_cph_mainContent_cph_img_btn"]')) <= 0):
+    login = len(driver.find_elements_by_xpath(
+        '//*[@id="baseContent_cph_mainContent_cph_img_btn"]'))
+    if(login <= 0):
         if(driver.find_element_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]').text == '帳號或密碼錯誤!'):
             return False
         if(driver.find_element_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]').text == '驗證碼錯誤'):
             print("Code Error")
             CodeError(inputpw)
+            return True
     else:
-
         return True
 
 
@@ -90,9 +90,13 @@ def getData():
             '/html/body/div/div/div['+str(28+i*7)+']')
         classtime = driver.find_element_by_xpath(
             '/html/body/div/div/div['+str(31+i*7)+']')
-        print(myclass.text, end="\t")
-        print(classname.text, end="\t")
-        print(classtime.text)
+        # print(myclass.text, end="\t")
+        # print(classname.text, end="\t")
+        classtime = classtime.text.replace("\n", "")
+        classtime = classtime.replace("  ", " ")
+        classtime = classtime.replace("  ", " ")
+        classtime = classtime.replace("  ", " ")
+        print(classtime)
     # classtime = driver.find_element_by_xpath(
     #     '//*[@id="scrperiod1-0"]')
     driver.close()
