@@ -21,11 +21,15 @@ def CodeError(
     Codes.send_keys(tempcode)
 
     password.send_keys(inputpw)
+
+    if(len(driver.find_elements_by_xpath(
+            '//*[@id="baseContent_cph_mainContent_cph_img_btn"]'))):
+        return True
+
     if(len(driver.find_elements_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]'))):
         if(driver.find_element_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]').text == '驗證碼錯誤'):
             print("Code Error")
             CodeError(inputpw)
-
     return True
 
 
@@ -62,8 +66,7 @@ def logins(inputac,
             return False
         if(driver.find_element_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]').text == '驗證碼錯誤'):
             print("Code Error")
-            CodeError(inputpw)
-            return True
+            return CodeError(inputpw)
     else:
         return True
 

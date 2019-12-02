@@ -1,5 +1,5 @@
 
-from sklearn.externals import joblib
+import joblib
 from sklearn.neural_network import MLPClassifier
 import numpy
 from sklearn.preprocessing import StandardScaler
@@ -30,6 +30,6 @@ scaler = StandardScaler()
 scaler.fit(digit_ary)
 X_scaled = scaler.transform(digit_ary)
 mlp = MLPClassifier(hidden_layer_sizes=(30, 30, 30),
-                    activation='logistic', max_iter=3000)
+                    activation='logistic', max_iter=5000)
 mlp.fit(X_scaled, labels)
 joblib.dump(mlp, 'captcha.pkl')

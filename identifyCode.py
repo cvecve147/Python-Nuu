@@ -8,7 +8,7 @@ import os
 import PIL
 import requests
 from PIL import Image
-from sklearn.externals import joblib
+import joblib
 clf = joblib.load('captcha.pkl')
 
 basewidth = 50
