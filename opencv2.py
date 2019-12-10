@@ -16,7 +16,6 @@ for i in range(0, 10):
     for img in os.listdir('./{}/'.format(i)):
         pil_image = PIL.Image.open(
             './{}/{}'.format(i, img)).convert('1')
-
         wpercent = (basewidth/float(pil_image.size[0]))
         hsize = int((float(pil_image.size[1])*float(wpercent)))
         img = pil_image.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
@@ -24,12 +23,14 @@ for i in range(0, 10):
         cnt = cnt + 1
         digits.append([pixel for pixel in iter(img.getdata())])
         labels.append(i)
+        # 二元值
+print(cnt)
 digit_ary = numpy.array(digits)
 
 scaler = StandardScaler()
 scaler.fit(digit_ary)
 X_scaled = scaler.transform(digit_ary)
-mlp = MLPClassifier(hidden_layer_sizes=(30, 30, 30),
-                    activation='logistic', max_iter=10000)
+mlp = MLPClassifier(hidden_layer_sizes=(90, 60, 30),
+                    activation='logistic', max_iter=9000000)
 mlp.fit(X_scaled, labels)
 joblib.dump(mlp, 'captcha.pkl')

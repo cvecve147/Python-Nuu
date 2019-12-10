@@ -20,9 +20,8 @@ def saveKaptcha():
     ret, thessh = cv2.threshold(gray, 127, 255, 0)
     x = numpy.array(thessh)
 
-    x[x < 100] = 250
-    x[x >= 255] = 0
-    x[x >= 250] = 255
+    x[x <= 0] = 1
+    x[x > 1] = 0
 
     contours, hierarchy = cv2.findContours(
         x, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)

@@ -34,40 +34,12 @@ def insert(account, classname, teacher, week, time):
             connection.close()
 
 
-def CodeError(
-        inputpw):
-    password = driver.find_element_by_xpath('//*[@id="act_pwd_txt"]')
-    element = driver.find_element_by_xpath('//*[@id="captchaBox"]/img')
-
-    element.screenshot('code.png')
-    IdCode.saveKaptcha()
-    code = IdCode.predictKaptcha('./imagedata')
-    tempcode = ""
-    for i in code:
-        tempcode += str(i)
-    print(tempcode)
-    Codes = driver.find_element_by_xpath(
-        '//*[@id="baseContent_cph_confirm_txt"]')
-    Codes.send_keys(tempcode)
-
-    password.send_keys(inputpw)
-    password.send_keys("\n")
-
-    if(len(driver.find_elements_by_xpath(
-            '//*[@id="baseContent_cph_mainContent_cph_img_btn"]'))):
-        return True
-
-    if(len(driver.find_elements_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]'))):
-        if(driver.find_element_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]').text == '驗證碼錯誤'):
-            print("Code Error")
-            CodeError(inputpw)
-    return True
-
-
 def logins(inputac,
            inputpw):
 
     chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--disable-gpu')
     global driver
     driver = webdriver.Chrome(options=chrome_options)
     driver.get("https://eap10.nuu.edu.tw/Login.aspx?logintype=S")
@@ -98,8 +70,51 @@ def logins(inputac,
             return False
         if(driver.find_element_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]').text == '驗證碼錯誤'):
             print("Code Error")
-            CodeError(inputpw)
-            return True
+            fo = open("opened2.txt", "r+")
+            inputsucc = fo.readline()
+            fo.close()
+            fo = open("opened2.txt", "w+")
+            inputsucc = int(inputsucc)
+            inputsucc += 1
+            fo.write(str(inputsucc))
+            fo.close()
+            while True:
+                password = driver.find_element_by_xpath(
+                    '//*[@id="act_pwd_txt"]')
+                element = driver.find_element_by_xpath(
+                    '//*[@id="captchaBox"]/img')
+
+                element.screenshot('code.png')
+                IdCode.saveKaptcha()
+                code = IdCode.predictKaptcha('./imagedata')
+                tempcode = ""
+                for i in code:
+                    tempcode += str(i)
+                print(tempcode)
+                Codes = driver.find_element_by_xpath(
+                    '//*[@id="baseContent_cph_confirm_txt"]')
+                Codes.send_keys(tempcode)
+
+                password.send_keys(inputpw)
+                password.send_keys("\n")
+
+                if(len(driver.find_elements_by_xpath(
+                        '//*[@id="baseContent_cph_mainContent_cph_img_btn"]'))):
+                    return True
+
+                if(len(driver.find_elements_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]'))):
+                    if(driver.find_element_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]').text == '驗證碼錯誤'):
+                        print("Code Error")
+                        # fo = open("opened2.txt", "r+")
+                        # inputsucc = fo.readline()
+                        # fo.close()
+                        # fo = open("opened2.txt", "w+")
+                        # inputsucc = int(inputsucc)
+                        # inputsucc += 1
+                        # fo.write(str(inputsucc))
+                        # fo.close()
+                        continue
+                return True
     else:
         return True
 
@@ -113,11 +128,10 @@ def getData(account):
     driver.find_element_by_xpath(
         '//*[@id="baseContent_cph_mainContent_cph_serach_btn"]').click()
 
-    driver.implicitly_wait(5)
-    time.sleep(2)
+    driver.find_elements_by_xpath(
+        '//*[@id="bobjid_1575905169322_iframe"]')
     driver.switch_to.frame(0)
-    # for i in driver.find_elements_by_xpath('//*[@id="clsname1-0"]'):
-    #     print(i.text)
+
     classname = driver.find_elements_by_xpath('// *[@id="subname1-0"]')
     classtime = driver.find_elements_by_xpath('//*[@id="scrperiod1-0"]')
     classnamelist = []
@@ -143,8 +157,6 @@ def getData(account):
     # week 星期
     # time 上課時間
 
-    driver.close()
-
 
 def regex(account, classname, classtime):
     alltime = re.findall(
@@ -159,17 +171,40 @@ def regex(account, classname, classtime):
 
 
 if __name__ == '__main__':
+    start = time.time()
     inputac = 'U0633101'
     fp = open('password.txt', 'r+')
     inputpw = fp.readline()
     fp.close()
+    # fo = open("opened.txt", "r+")
+    # inputsucc = fo.readline()
+    # fo.close()
+    # fo2 = open("opened2.txt", "r+")
+    # inputsucc2 = fo2.readline()
+    # fo2.close()
+    # print("目前準確度：", str(1-int(inputsucc2)/int(inputsucc)))
+    # fo = open("opened.txt", "w+")
+    # inputsucc = int(inputsucc)
+    # inputsucc += 1
+    # fo.write(str(inputsucc))
+    # fo.close()
     status = logins(inputac, inputpw)
     if(status):
         print("登入成功")
         getData(inputac)
     else:
         print("登入失敗")
-        driver.close()
 
+    driver.close()
+    driver.quit()
+    end = time.time()
+    elapsed = end - start
+    print("Time taken: ", elapsed, "seconds.")
     # ivy0920265978
     # regex("資訊管理實務專題(一) - 未排教室 張朝旭生涯發展與規劃 (一)03-04 K2-204 高淑芳系統分析與設計 (一)06-07 C1-615 (四)03 C1-615 陳宇佐人工智慧程式設計 (二)02-04 C1-607 曾筱珽網路廣告 (三)02-03 C1-615 (四)02 C1-602 楊宗珂資料庫系統實務 (三)07-09 C1-607 陳士杰戲劇的哲學批判 (四)05-06 K2-103 陳俊宇商用英文書信實務(一) (四)07-08 H1-706 程小芳")
+
+# 102 63
+# 100 28
+# 868 290
+# 1005 330
+# 1035 204

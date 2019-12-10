@@ -2,6 +2,7 @@ import os
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
+import sys
 
 img = cv2.imread('./code.png')
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -27,4 +28,4 @@ for id, (x, y, w, h) in enumerate(ary):
     thresh = roi.copy()
     a = fig.add_subplot(1, len(ary), id+1)
     plt.imshow(thresh)
-    plt.savefig('{}.jpg'.format(id+82), dpi=100)
+    plt.savefig('{}.jpg'.format(id+int(sys.argv[1])), dpi=100)
