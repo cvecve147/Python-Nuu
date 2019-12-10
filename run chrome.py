@@ -5,6 +5,7 @@ import time
 import mysql.connector
 from mysql.connector import Error
 import re
+import sys
 
 
 def insert(account, classname, teacher, week, time):
@@ -17,10 +18,16 @@ def insert(account, classname, teacher, week, time):
             password='root')  # 密碼
 
         # 新增資料
-        sql = "INSERT INTO school (account, class, teacher, week, time) VALUES (%s, %s, %s,%s,%s);"
-        new_data = (account, classname, teacher, week, time)
+        sql2 = "SELECT * FROM school WHERE account =%s and class=%s"
+        new_data = (account, classname)
         cursor = connection.cursor()
-        cursor.execute(sql, new_data)
+        cursor.execute(sql2, new_data)
+        myresult = cursor.fetchall()
+        if(myresult == []):
+            sql = "INSERT INTO school (account, class, teacher, week, time) VALUES (%s, %s, %s,%s,%s);"
+            new_data = (account, classname, teacher, week, time)
+            cursor = connection.cursor()
+            cursor.execute(sql, new_data)
 
         # 確認資料有存入資料庫
         connection.commit()
@@ -105,14 +112,14 @@ def logins(inputac,
                 if(len(driver.find_elements_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]'))):
                     if(driver.find_element_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]').text == '驗證碼錯誤'):
                         print("Code Error")
-                        # fo = open("opened2.txt", "r+")
-                        # inputsucc = fo.readline()
-                        # fo.close()
-                        # fo = open("opened2.txt", "w+")
-                        # inputsucc = int(inputsucc)
-                        # inputsucc += 1
-                        # fo.write(str(inputsucc))
-                        # fo.close()
+                        fo = open("opened2.txt", "r+")
+                        inputsucc = fo.readline()
+                        fo.close()
+                        fo = open("opened2.txt", "w+")
+                        inputsucc = int(inputsucc)
+                        inputsucc += 1
+                        fo.write(str(inputsucc))
+                        fo.close()
                         continue
                 return True
     else:
@@ -172,22 +179,20 @@ def regex(account, classname, classtime):
 
 if __name__ == '__main__':
     start = time.time()
-    inputac = 'U0633101'
-    fp = open('password.txt', 'r+')
-    inputpw = fp.readline()
-    fp.close()
-    # fo = open("opened.txt", "r+")
-    # inputsucc = fo.readline()
-    # fo.close()
-    # fo2 = open("opened2.txt", "r+")
-    # inputsucc2 = fo2.readline()
-    # fo2.close()
-    # print("目前準確度：", str(1-int(inputsucc2)/int(inputsucc)))
-    # fo = open("opened.txt", "w+")
-    # inputsucc = int(inputsucc)
-    # inputsucc += 1
-    # fo.write(str(inputsucc))
-    # fo.close()
+    inputac = sys.argv[1]
+    inputpw = sys.argv[2]
+    fo = open("opened.txt", "r+")
+    inputsucc = fo.readline()
+    fo.close()
+    fo2 = open("opened2.txt", "r+")
+    inputsucc2 = fo2.readline()
+    fo2.close()
+    print("目前準確度：", str(1-int(inputsucc2)/int(inputsucc)))
+    fo = open("opened.txt", "w+")
+    inputsucc = int(inputsucc)
+    inputsucc += 1
+    fo.write(str(inputsucc))
+    fo.close()
     status = logins(inputac, inputpw)
     if(status):
         print("登入成功")

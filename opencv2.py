@@ -12,7 +12,7 @@ labels = []
 basewidth = 50
 cnt = 0
 
-for i in range(0, 10):
+for i in range(2, 10):
     for img in os.listdir('./{}/'.format(i)):
         pil_image = PIL.Image.open(
             './{}/{}'.format(i, img)).convert('1')
@@ -31,6 +31,6 @@ scaler = StandardScaler()
 scaler.fit(digit_ary)
 X_scaled = scaler.transform(digit_ary)
 mlp = MLPClassifier(hidden_layer_sizes=(90, 60, 30),
-                    activation='logistic', max_iter=9000000)
+                    activation='logistic', learning_rate="adaptive", max_iter=10000)
 mlp.fit(X_scaled, labels)
 joblib.dump(mlp, 'captcha.pkl')
