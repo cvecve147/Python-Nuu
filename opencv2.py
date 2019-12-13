@@ -31,6 +31,6 @@ scaler = StandardScaler()
 scaler.fit(digit_ary)
 X_scaled = scaler.transform(digit_ary)
 mlp = MLPClassifier(hidden_layer_sizes=(90, 60, 30),
-                    activation='logistic', learning_rate="adaptive", max_iter=10000)
+                    activation='logistic', learning_rate="adaptive", max_iter=15000)
 mlp.fit(X_scaled, labels)
 joblib.dump(mlp, 'captcha.pkl')

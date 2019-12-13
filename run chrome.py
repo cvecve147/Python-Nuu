@@ -18,8 +18,8 @@ def insert(account, classname, teacher, week, time):
             password='root')  # 密碼
 
         # 新增資料
-        sql2 = "SELECT * FROM school WHERE account =%s and class=%s"
-        new_data = (account, classname)
+        sql2 = "SELECT * FROM school WHERE account =%s and class=%s and  teacher=%s and week=%s and time=%s"
+        new_data = (account, classname, teacher, week, time)
         cursor = connection.cursor()
         cursor.execute(sql2, new_data)
         myresult = cursor.fetchall()
@@ -173,8 +173,19 @@ def regex(account, classname, classtime):
         time = re.findall("0[0-9]-0[0-9]|0[0-9]", i)
         teacher = classtime.split(" ")
         teacher = teacher[-1]
-        print(account, classname, teacher, week[0], time[0])
-        insert(account, classname, teacher, week[0], time[0])
+        desh = "-"
+
+        for j in time:
+            try:
+                j.index(desh)
+            except (ValueError):
+                print(account, classname, teacher, week[0], time[0])
+                insert(account, classname, teacher, week[0], int(time[0]))
+            else:
+                times = j.split("-")
+                for k in range(int(times[0]), int(times[1])+1):
+                    print(account, classname, teacher, week[0], k)
+                    insert(account, classname, teacher, week[0], k)
 
 
 if __name__ == '__main__':
@@ -196,7 +207,7 @@ if __name__ == '__main__':
     status = logins(inputac, inputpw)
     if(status):
         print("登入成功")
-        getData(inputac)
+        # getData(inputac)
     else:
         print("登入失敗")
 
