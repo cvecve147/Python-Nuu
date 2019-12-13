@@ -1,7 +1,5 @@
 <?php
-echo "123";
-$user = "U0633126";
-$password = "cplyuef357";
-$ret = system('conda activate');
+$user = $_GET['acc'];
+$password = $_GET['pwd'];
+echo "runing ";
 $ret = system('python "./run chrome.py" ' . $user . " " . $password);
-echo $ret;

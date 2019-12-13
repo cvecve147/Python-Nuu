@@ -15,7 +15,7 @@ def insert(account, classname, teacher, week, time):
             host='localhost',          # 主機名稱
             database='school timetable',  # 資料庫名稱
             user='root',        # 帳號
-            password='root')  # 密碼
+            password='')  # 密碼
 
         # 新增資料
         sql2 = "SELECT * FROM school WHERE account =%s and class=%s and  teacher=%s and week=%s and time=%s"
@@ -48,7 +48,7 @@ def logins(inputac,
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--disable-gpu')
     global driver
-    driver = webdriver.Chrome(options=chrome_options)
+    driver = webdriver.Chrome("./chromedriver",options=chrome_options)
     driver.get("https://eap10.nuu.edu.tw/Login.aspx?logintype=S")
     driver.implicitly_wait(10)  # 等待最多10秒
     account = driver.find_element_by_xpath(
@@ -62,7 +62,7 @@ def logins(inputac,
     tempcode = ""
     for i in code:
         tempcode += str(i)
-    print(tempcode)
+    # print(tempcode)
     Codes = driver.find_element_by_xpath(
         '//*[@id="baseContent_cph_confirm_txt"]')
     Codes.send_keys(tempcode)
@@ -76,7 +76,7 @@ def logins(inputac,
         if(driver.find_element_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]').text == '帳號或密碼錯誤!'):
             return False
         if(driver.find_element_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]').text == '驗證碼錯誤'):
-            print("Code Error")
+            # print("Code Error")
             fo = open("opened2.txt", "r+")
             inputsucc = fo.readline()
             fo.close()
@@ -97,7 +97,7 @@ def logins(inputac,
                 tempcode = ""
                 for i in code:
                     tempcode += str(i)
-                print(tempcode)
+                # print(tempcode)
                 Codes = driver.find_element_by_xpath(
                     '//*[@id="baseContent_cph_confirm_txt"]')
                 Codes.send_keys(tempcode)
@@ -111,7 +111,7 @@ def logins(inputac,
 
                 if(len(driver.find_elements_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]'))):
                     if(driver.find_element_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]').text == '驗證碼錯誤'):
-                        print("Code Error")
+                        # print("Code Error")
                         fo = open("opened2.txt", "r+")
                         inputsucc = fo.readline()
                         fo.close()
@@ -127,7 +127,7 @@ def logins(inputac,
 
 
 def getData(account):
-    print("Get Data")
+    # print("Get Data")
     driver.get(
         "https://eap10.nuu.edu.tw/S0100/S0132/S01320901.aspx?sys_id=S00&sys_pid=S01320901")
 
@@ -179,12 +179,12 @@ def regex(account, classname, classtime):
             try:
                 j.index(desh)
             except (ValueError):
-                print(account, classname, teacher, week[0], time[0])
+                # print(account, classname, teacher, week[0], time[0])
                 insert(account, classname, teacher, week[0], int(time[0]))
             else:
                 times = j.split("-")
                 for k in range(int(times[0]), int(times[1])+1):
-                    print(account, classname, teacher, week[0], k)
+                    # print(account, classname, teacher, week[0], k)
                     insert(account, classname, teacher, week[0], k)
 
 
@@ -198,7 +198,7 @@ if __name__ == '__main__':
     fo2 = open("opened2.txt", "r+")
     inputsucc2 = fo2.readline()
     fo2.close()
-    print("目前準確度：", str(1-int(inputsucc2)/int(inputsucc)))
+    # print("目前準確度：", str(1-int(inputsucc2)/int(inputsucc)))
     fo = open("opened.txt", "w+")
     inputsucc = int(inputsucc)
     inputsucc += 1
@@ -206,16 +206,16 @@ if __name__ == '__main__':
     fo.close()
     status = logins(inputac, inputpw)
     if(status):
-        print("登入成功")
-        # getData(inputac)
+        print("loginOK")
+        getData(inputac)
     else:
-        print("登入失敗")
+        print("loginError")
 
     driver.close()
     driver.quit()
     end = time.time()
     elapsed = end - start
-    print("Time taken: ", elapsed, "seconds.")
+    # print("Time taken: ", elapsed, "seconds.")
     # ivy0920265978
     # regex("資訊管理實務專題(一) - 未排教室 張朝旭生涯發展與規劃 (一)03-04 K2-204 高淑芳系統分析與設計 (一)06-07 C1-615 (四)03 C1-615 陳宇佐人工智慧程式設計 (二)02-04 C1-607 曾筱珽網路廣告 (三)02-03 C1-615 (四)02 C1-602 楊宗珂資料庫系統實務 (三)07-09 C1-607 陳士杰戲劇的哲學批判 (四)05-06 K2-103 陳俊宇商用英文書信實務(一) (四)07-08 H1-706 程小芳")
 
