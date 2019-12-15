@@ -70,13 +70,13 @@ def logins(inputac,
     account.send_keys(inputac)
     password.send_keys(inputpw)
     password.send_keys("\n")
-    login = len(driver.find_elements_by_xpath(
-        '//*[@id="baseContent_cph_mainContent_cph_img_btn"]'))
+    login=len(driver.find_elements_by_xpath('//*[@id="baseContent_cph_mainContent_cph_img_btn"]'))
     if(login <= 0):
-        if(driver.find_element_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]').text == '帳號或密碼錯誤!'):
+        loginerror = driver.find_element_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]').text
+        if( loginerror == '帳號或密碼錯誤!'):
             return False
-        if(driver.find_element_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]').text == '驗證碼錯誤'):
-            # print("Code Error")
+        if(loginerror == '驗證碼錯誤'):
+            print("Code Error")
             fo = open("opened2.txt", "r+")
             inputsucc = fo.readline()
             fo.close()
@@ -97,7 +97,6 @@ def logins(inputac,
                 tempcode = ""
                 for i in code:
                     tempcode += str(i)
-                # print(tempcode)
                 Codes = driver.find_element_by_xpath(
                     '//*[@id="baseContent_cph_confirm_txt"]')
                 Codes.send_keys(tempcode)
@@ -108,20 +107,8 @@ def logins(inputac,
                 if(len(driver.find_elements_by_xpath(
                         '//*[@id="baseContent_cph_mainContent_cph_img_btn"]'))):
                     return True
-
-                if(len(driver.find_elements_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]'))):
-                    if(driver.find_element_by_xpath('//*[@id="jGrowl"]/div[2]/div[2]').text == '驗證碼錯誤'):
-                        # print("Code Error")
-                        fo = open("opened2.txt", "r+")
-                        inputsucc = fo.readline()
-                        fo.close()
-                        fo = open("opened2.txt", "w+")
-                        inputsucc = int(inputsucc)
-                        inputsucc += 1
-                        fo.write(str(inputsucc))
-                        fo.close()
-                        continue
-                return True
+                print("Code Error")
+                continue
     else:
         return True
 
@@ -163,7 +150,7 @@ def getData(account):
     # teacher 老師
     # week 星期
     # time 上課時間
-
+    # 加密
 
 def regex(account, classname, classtime):
     alltime = re.findall(
@@ -198,7 +185,7 @@ if __name__ == '__main__':
     fo2 = open("opened2.txt", "r+")
     inputsucc2 = fo2.readline()
     fo2.close()
-    # print("目前準確度：", str(1-int(inputsucc2)/int(inputsucc)))
+    print("目前準確度：", str(1-int(inputsucc2)/int(inputsucc)))
     fo = open("opened.txt", "w+")
     inputsucc = int(inputsucc)
     inputsucc += 1
