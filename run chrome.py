@@ -8,7 +8,7 @@ import re
 import sys
 
 
-def insert(account, classname, teacher, week, time):
+def insert(account, classID,classname, teacher, week, time):
     try:
         # 連接 MySQL/MariaDB 資料庫
         connection = mysql.connector.connect(
@@ -24,8 +24,8 @@ def insert(account, classname, teacher, week, time):
         cursor.execute(sql2, new_data)
         myresult = cursor.fetchall()
         if(myresult == []):
-            sql = "INSERT INTO school (account, class, teacher, week, time) VALUES (%s, %s, %s,%s,%s);"
-            new_data = (account, classname, teacher, week, time)
+            sql = "INSERT INTO school (account, classID ,class, teacher, week, time) VALUES (%s, %s, %s, %s,%s,%s);"
+            new_data = (account,classID, classname, teacher, week, time)
             cursor = connection.cursor()
             cursor.execute(sql, new_data)
 
@@ -127,22 +127,25 @@ def getData(account):
     driver.switch_to.frame(0)
 
     classname = driver.find_elements_by_xpath('// *[@id="subname1-0"]')
+    classID = driver.find_elements_by_xpath('//*[@id="Text2-0"]')
     classtime = driver.find_elements_by_xpath('//*[@id="scrperiod1-0"]')
     classnamelist = []
     classtimelist = []
+    classIDlist = []
     #
 
     for i in classname:
         classnamelist.append(i.text)
+    for i in classID:
+        classIDlist.append(i.text)
     for i in classtime:
         cleartime = i.text.replace("\n", "")
         cleartime = cleartime.replace("  ", " ")
         cleartime = cleartime.replace("  ", " ")
         cleartime = cleartime.replace("  ", " ")
         classtimelist.append(cleartime)
-
     for i in range(0, len(classnamelist)):
-        regex(account, classnamelist[i], str(classtimelist[i]))
+        regex(account,classIDlist[i] ,classnamelist[i], str(classtimelist[i]))
         # print(classnamelist[i], classtimelist[i])
     # id 自己產生編號
     # acount 帳號
@@ -152,7 +155,7 @@ def getData(account):
     # time 上課時間
     # 加密
 
-def regex(account, classname, classtime):
+def regex(account,  classID,classname, classtime):
     alltime = re.findall(
         "\([一二三四五六]\)0[0-9]-0[0-9]|\([一二三四五六]\)0[0-9]", classtime)
     for i in alltime:
@@ -166,13 +169,13 @@ def regex(account, classname, classtime):
             try:
                 j.index(desh)
             except (ValueError):
-                # print(account, classname, teacher, week[0], time[0])
-                insert(account, classname, teacher, week[0], int(time[0]))
+                # print(account,classID, classname, teacher, week[0], time[0])
+                insert(account,classID, classname, teacher, week[0], int(time[0]))
             else:
                 times = j.split("-")
                 for k in range(int(times[0]), int(times[1])+1):
-                    # print(account, classname, teacher, week[0], k)
-                    insert(account, classname, teacher, week[0], k)
+                    # print(account,classID, classname, teacher, week[0], k)
+                    insert(account,classID, classname, teacher, week[0], k)
 
 
 if __name__ == '__main__':
@@ -185,7 +188,7 @@ if __name__ == '__main__':
     fo2 = open("opened2.txt", "r+")
     inputsucc2 = fo2.readline()
     fo2.close()
-    print("目前準確度：", str(1-int(inputsucc2)/int(inputsucc)))
+    # print("目前準確度：", str(1-int(inputsucc2)/int(inputsucc)))
     fo = open("opened.txt", "w+")
     inputsucc = int(inputsucc)
     inputsucc += 1
@@ -205,9 +208,3 @@ if __name__ == '__main__':
     # print("Time taken: ", elapsed, "seconds.")
     # ivy0920265978
     # regex("資訊管理實務專題(一) - 未排教室 張朝旭生涯發展與規劃 (一)03-04 K2-204 高淑芳系統分析與設計 (一)06-07 C1-615 (四)03 C1-615 陳宇佐人工智慧程式設計 (二)02-04 C1-607 曾筱珽網路廣告 (三)02-03 C1-615 (四)02 C1-602 楊宗珂資料庫系統實務 (三)07-09 C1-607 陳士杰戲劇的哲學批判 (四)05-06 K2-103 陳俊宇商用英文書信實務(一) (四)07-08 H1-706 程小芳")
-
-# 102 63
-# 100 28
-# 868 290
-# 1005 330
-# 1035 204
